@@ -182,11 +182,13 @@ async def collect_item_ips(
             for ipv4 in detail_network['subnet_ip_availability']:
                 ipv4 = json.dumps(ipv4)
                 ipv4 = json.loads(ipv4)
-                print(ipv4['total_ips'])
                 if ipv4['ip_version'] == '4':
-                    total_ips += detail_network['total_ips']
-                    total_ips_used += detail_network['used_ips']
-                    total_ips_availabity += total_ips - total_ips_used
+                    total_ips += ipv4['total_ips']
+                    total_ips_used += ipv4['used_ips']
+                    total_ips_availabity += ipv4['total_ips']- ipv4['used_ips']
+    print(total_ips)
+    print(total_ips_used)
+    print(total_ips_availabity)
     packet_ips = [ZabbixMetric(hostId,
                                 key_ips_total,
                                 total_ips),
