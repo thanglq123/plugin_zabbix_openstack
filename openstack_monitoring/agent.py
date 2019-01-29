@@ -178,11 +178,11 @@ async def collect_item_ips(
             detail_network = requests.get(
                 url=url_api_detail_network,
                 headers={"X-Auth-Token": id_token}
-            ).json()['network_ip_availability']['subnet_ip_availability']
-            ipv4 = detail_network.json()
-            total_ips += ipv4['total_ips']
-            total_ips_used += ipv4['used_ips']
-            total_ips_availabity += ipv4['total_ips'] - ipv4['used_ips']
+            ).json()['network_ip_availability']
+            print(detail_network['subnet_ip_availability'])
+            total_ips += detail_network['total_ips']
+            total_ips_used += detail_network['used_ips']
+            total_ips_availabity += total_ips - total_ips_used
     packet_ips = [ZabbixMetric(hostId,
                                 key_ips_total,
                                 total_ips),
