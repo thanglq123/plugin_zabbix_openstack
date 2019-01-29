@@ -4,11 +4,12 @@ import time
 import aiohttp
 import asyncio
 import requests
+import json
+
 from pyzabbix import ZabbixMetric, ZabbixSender
 
 from openstack_monitoring import utils
 from openstack_monitoring.utils import CreateToken
-
 
 async def send_metric(zserver, port, packet_item):
     """
@@ -179,8 +180,7 @@ async def collect_item_ips(
                 url=url_api_detail_network,
                 headers={"X-Auth-Token": id_token}
             ).json()['network_ip_availability']
-            ipv4 = detail_network['subnet_ip_availability']
-            ipv4 = await ipv4.json()
+            ipv4 = json.loads(detail_network['subnet_ip_availability'])
             print(ipv4)
             total_ips += detail_network['total_ips']
             total_ips_used += detail_network['used_ips']
