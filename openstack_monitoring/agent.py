@@ -180,8 +180,8 @@ async def collect_item_ips(
                 headers={"X-Auth-Token": id_token}
             ).json()['network_ip_availability']
             ipv4 = detail_network['subnet_ip_availability']
-            #ipv4 = json.loads(ipv4[0])
-            print(ipv4[0])
+            ipv4 = json.load(ipv4[0])
+            print(ipv4)
             total_ips += detail_network['total_ips']
             total_ips_used += detail_network['used_ips']
             total_ips_availabity += total_ips - total_ips_used
