@@ -182,10 +182,11 @@ async def collect_item_ips(
             for ipv4 in detail_network['subnet_ip_availability']:
                 ipv4 = json.dumps(ipv4)
                 ipv4 = json.loads(ipv4)
-                if ipv4['ip_version'] == '4':
+                if ipv4['ip_version'] == 4:
                     total_ips += ipv4['total_ips']
                     total_ips_used += ipv4['used_ips']
                     total_ips_availabity += ipv4['total_ips']- ipv4['used_ips']
+                    print(ipv4)
     print(total_ips)
     print(total_ips_used)
     print(total_ips_availabity)
