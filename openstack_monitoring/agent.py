@@ -48,6 +48,7 @@ async def collect_item_volumes(
     total_volumes_in_use = 0
     total_volumes_error = 0
     total_volumes = str(len(data['volumes']))
+    print(data)
     for volume in data['volumes']:
         if volume['status'] == 'available':
             total_volumes_available += 1
@@ -186,10 +187,6 @@ async def collect_item_ips(
                     total_ips += ipv4['total_ips']
                     total_ips_used += ipv4['used_ips']
                     total_ips_availabity += ipv4['total_ips']- ipv4['used_ips']
-                    print(ipv4)
-    print(total_ips)
-    print(total_ips_used)
-    print(total_ips_availabity)
     packet_ips = [ZabbixMetric(hostId,
                                 key_ips_total,
                                 total_ips),
