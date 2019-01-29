@@ -4,6 +4,7 @@ import time
 import aiohttp
 import asyncio
 import requests
+import json
 from pyzabbix import ZabbixMetric, ZabbixSender
 
 from openstack_monitoring import utils
