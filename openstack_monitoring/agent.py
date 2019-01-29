@@ -179,7 +179,8 @@ async def collect_item_ips(
                 url=url_api_detail_network,
                 headers={"X-Auth-Token": id_token}
             ).json()['network_ip_availability']
-            print(detail_network['subnet_ip_availability'].json())
+            detail_network = detail_network['subnet_ip_availability']
+            print(detail_network)
             total_ips += detail_network['total_ips']
             total_ips_used += detail_network['used_ips']
             total_ips_availabity += total_ips - total_ips_used
