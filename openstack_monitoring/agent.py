@@ -179,13 +179,14 @@ async def collect_item_ips(
                 url=url_api_detail_network,
                 headers={"X-Auth-Token": id_token}
             ).json()['network_ip_availability']
-            ipv4 = detail_network['subnet_ip_availability']
-            ipv4 = json.dumps(ipv4[0])
-            ipv4 = json.loads(ipv4)
-            print(ipv4['total_ips'])
-            total_ips += detail_network['total_ips']
-            total_ips_used += detail_network['used_ips']
-            total_ips_availabity += total_ips - total_ips_used
+            for ipv4 in detail_network['subnet_ip_availability']:
+                ipv4 = json.dumps(ipv4)
+                ipv4 = json.loads(ipv4)
+                print(ipv4['total_ips'])
+                if ipv4['ip_version'] == 4:
+                total_ips += detail_network['total_ips']
+                total_ips_used += detail_network['used_ips']
+                total_ips_availabity += total_ips - total_ips_used
     packet_ips = [ZabbixMetric(hostId,
                                 key_ips_total,
                                 total_ips),
