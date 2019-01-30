@@ -51,7 +51,7 @@ async def join_item_volumes(
     data = json.dumps(data)
     data = json.loads(data)
     data = json.loads(data)
-    print(data['volumes'])
+    #print(data['volumes'])
     total_volumes = str(len(data['volumes']))
     for volume in data['volumes']:
         if volume['status'] == 'available':
@@ -62,7 +62,7 @@ async def join_item_volumes(
             total_volumes_error += 1
         else:
             total_volumes_other += 1
-    re = {"total_volumes_available" : total_volumes_available, "total_volumes_other": total_volumes_other, "total_volumes_in_use": total_volumes_in_use, "total_volumes_error": total_volumes_error}
+    re = {"total_volumes": total_volumes, "total_volumes_available" : total_volumes_available, "total_volumes_other": total_volumes_other, "total_volumes_in_use": total_volumes_in_use, "total_volumes_error": total_volumes_error}
     if data['volumes_links'][0]['rel'] == 'next':
         re['next'] = data['volumes_links'][0]['href']
     return re
@@ -282,6 +282,7 @@ async def get_volumes(url, id_token, config_dict):
                 json_body = await r.text()
                 result = await join_item_volumes(data=json_body,
                                                     config_dict=config_dict)
+                print(type(result))
                 print(result)
                 print('collect volumes finish at {}'.format(
                     time.strftime('%d/%m/%Y %H:%M:%S')))
