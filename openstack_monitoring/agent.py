@@ -48,6 +48,7 @@ async def collect_item_volumes(
     total_volumes_in_use = 0
     total_volumes_error = 0
     total_volumes = str(len(data['volumes']))
+    print(data)
     for volume in data['volumes']:
         if volume['status'] == 'available':
             total_volumes_available += 1
@@ -226,8 +227,7 @@ async def get_volumes(url, id_token, config_dict):
             headers={"X-Auth-Token": id_token}
         ) as session:
             async with session.get(url) as r:
-                json_body = await r.json()
-                print(json_body)
+                json_body = await r.text()
                 result = await collect_item_volumes(data=json_body,
                                                     config_dict=config_dict)
                 # print(result)
