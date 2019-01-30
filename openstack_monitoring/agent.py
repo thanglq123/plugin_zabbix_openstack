@@ -217,23 +217,23 @@ async def get_vms(url, id_token, config_dict):
                     time.strftime('%d/%m/%Y %H:%M:%S')))
         await asyncio.sleep(30)
 
-
 async def get_volumes(url, id_token, config_dict):
     while True:
-        print('collect volumes at {}'.format(time.strftime('%d/%m/%Y %H:%M:%S')))
+        print('collect volumes at {}'.format(
+            time.strftime('%d/%m/%Y %H:%M:%S'))
+        )
         async with aiohttp.ClientSession(
             headers={"X-Auth-Token": id_token}
         ) as session:
             async with session.get(url) as r:
                 json_body = await r.json()
-                print(json_body)
+                print(url)
                 result = await collect_item_volumes(data=json_body,
-                                                config_dict=config_dict)
+                                                     config_dict=config_dict)
                 # print(result)
                 print('collect volumes finish at {}'.format(
                     time.strftime('%d/%m/%Y %H:%M:%S')))
-        await asyncio.sleep(30)
-
+                await asyncio.sleep(30)
 
 async def get_projects(url, id_token, config_dict):
     while True:
