@@ -286,7 +286,7 @@ async def get_volumes(url, id_token, config_dict):
                 re = await join_item_volumes(data=json_body,
                                                     config_dict=config_dict)
                 if re['next']:
-                    re = await get_volumes_next(result['next'], id_token, config_dict, re)
+                    re = await get_volumes_next(re['next'], id_token, config_dict, re)
                 print(type(re))
                 print(re)
                 print('collect volumes finish at {}'.format(
@@ -295,9 +295,6 @@ async def get_volumes(url, id_token, config_dict):
 
 async def get_volumes_next(url, id_token, config_dict, re):
     while True:
-        print('collect volumes at {}'.format(
-            time.strftime('%d/%m/%Y %H:%M:%S'))
-        )
         async with aiohttp.ClientSession(
             headers={"X-Auth-Token": id_token}
         ) as session:
@@ -306,11 +303,10 @@ async def get_volumes_next(url, id_token, config_dict, re):
                 re = await join_item_volumes(data=json_body,
                                                     config_dict=config_dict, 
                                                     result=re)
+                print(re)
                 if re['next']:
-                    re = await get_volumes_next(result['next'], id_token, config_dig, re)
-                print('collect volumes finish at {}'.format(
-                    time.strftime('%d/%m/%Y %H:%M:%S')))
-                await asyncio.sleep(30)
+                    re = await get_volumes_next(re['next'], id_token, config_dig, re)
+                return re
 
 async def get_projects(url, id_token, config_dict):
     while True:
