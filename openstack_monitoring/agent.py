@@ -227,9 +227,9 @@ async def get_volumes(url, id_token, config_dict):
         ) as session:
             async with session.get(url) as r:
                 json_body = await r.json()
-                print(url)
+                print(json_body)
                 result = await collect_item_volumes(data=json_body,
-                                                     config_dict=config_dict)
+                                                    config_dict=config_dict)
                 # print(result)
                 print('collect volumes finish at {}'.format(
                     time.strftime('%d/%m/%Y %H:%M:%S')))
