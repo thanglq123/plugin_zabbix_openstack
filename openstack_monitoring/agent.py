@@ -48,7 +48,9 @@ async def collect_item_volumes(
     total_volumes_in_use = 0
     total_volumes_error = 0
     total_volumes = str(len(data['volumes']))
-    print(data)
+    data = json.dumps(data)
+    data = json.loads(data)
+    data = json.loads(data)
     for volume in data['volumes']:
         if volume['status'] == 'available':
             total_volumes_available += 1
