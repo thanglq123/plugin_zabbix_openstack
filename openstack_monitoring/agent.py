@@ -23,6 +23,7 @@ async def send_metric(zserver, port, packet_item):
 async def join_item_volumes(
         data,
         config_dict,
+        result=None,
         zserver=None,
         hostId=None,
         port=None,
@@ -44,25 +45,27 @@ async def join_item_volumes(
     key_volumes_other = key_volumes_other or config_dict['key-volumes_other']
     key_volumes_in_use = key_volumes_in_use or config_dict['key-volumes_in_use']
     key_volumes_error = key_volumes_error or config_dict['key-volumes_error']
-    total_volumes_available = 0
-    total_volumes_other = 0
-    total_volumes_in_use = 0
-    total_volumes_error = 0
+    if result == None:
+        re = {}
+        re['total_volumes_available'] = 0
+        re['total_volumes_other'] = 0
+        re['total_volumes_in_use'] = 0
+        re['total_volumes_error'] = 0
+    
     data = json.dumps(data)
     data = json.loads(data)
     data = json.loads(data)
     #print(data['volumes'])
-    total_volumes = str(len(data['volumes']))
+    re['total_volumes'] = str(len(data['volumes']))
     for volume in data['volumes']:
         if volume['status'] == 'available':
-            total_volumes_available += 1
+            re['total_volumes_available'] += 1
         elif volume['status'] == 'in-use':
-            total_volumes_in_use += 1
+            re['total_volumes_in_use'] += 1
         elif volume['status'] == 'error':
-            total_volumes_error += 1
+            re['total_volumes_error'] += 1
         else:
-            total_volumes_other += 1
-    re = {"total_volumes": total_volumes, "total_volumes_available" : total_volumes_available, "total_volumes_other": total_volumes_other, "total_volumes_in_use": total_volumes_in_use, "total_volumes_error": total_volumes_error}
+            re['total_volumes_other'] += 1
     if data['volumes_links'][0]['rel'] == 'next':
         re['next'] = data['volumes_links'][0]['href']
     return re
@@ -280,10 +283,31 @@ async def get_volumes(url, id_token, config_dict):
         ) as session:
             async with session.get(url) as r:
                 json_body = await r.text()
-                result = await join_item_volumes(data=json_body,
+                re = await join_item_volumes(data=json_body,
                                                     config_dict=config_dict)
-                print(type(result))
-                print(result)
+                if re['next']:
+                    re = await get_volumes_next(result['next'], id_token, config_dict, re)
+                print(type(re))
+                print(re)
+                print('collect volumes finish at {}'.format(
+                    time.strftime('%d/%m/%Y %H:%M:%S')))
+                await asyncio.sleep(30)
+
+async def get_volumes_next(url, id_token, config_dict, re):
+    while True:
+        print('collect volumes at {}'.format(
+            time.strftime('%d/%m/%Y %H:%M:%S'))
+        )
+        async with aiohttp.ClientSession(
+            headers={"X-Auth-Token": id_token}
+        ) as session:
+            async with session.get(url) as r:
+                json_body = await r.text()
+                re = await join_item_volumes(data=json_body,
+                                                    config_dict=config_dict, 
+                                                    result=re)
+                if re['next']:
+                    re = await get_volumes_next(result['next'], id_token, config_dig, re)
                 print('collect volumes finish at {}'.format(
                     time.strftime('%d/%m/%Y %H:%M:%S')))
                 await asyncio.sleep(30)
