@@ -63,7 +63,7 @@ async def join_item_volumes(
         else:
             total_volumes_other += 1
     re = {"total_volumes_available" : total_volumes_available, "total_volumes_other": total_volumes_other, "total_volumes_in_use": total_volumes_in_use, "total_volumes_error": total_volumes_error}
-    if data['volumes_links'][0]['rel'] == 'next'
+    if data['volumes_links'][0]['rel'] == 'next':
         re['next'] = data['volumes_links'][0]['href']
     return re
 
