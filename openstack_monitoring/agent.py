@@ -20,6 +20,53 @@ async def send_metric(zserver, port, packet_item):
     return result
 
 
+async def join_item_volumes(
+        data,
+        config_dict,
+        zserver=None,
+        hostId=None,
+        port=None,
+        key_volumes_total=None,
+        key_volumes_available=None,
+        key_volumes_in_use=None,
+        key_volumes_other=None,
+        key_volumes_error=None
+):
+    zserver = zserver or config_dict['zabbix-zserver']
+    hostId = hostId or config_dict['zabbix-hostid']
+    port = port or config_dict['zabbix-port']
+    key_volumes_total = key_volumes_total or config_dict[
+        'key-volumes_total'
+    ]
+    key_volumes_available = key_volumes_available or config_dict[
+        'key-volumes_available'
+    ]
+    key_volumes_other = key_volumes_other or config_dict['key-volumes_other']
+    key_volumes_in_use = key_volumes_in_use or config_dict['key-volumes_in_use']
+    key_volumes_error = key_volumes_error or config_dict['key-volumes_error']
+    total_volumes_available = 0
+    total_volumes_other = 0
+    total_volumes_in_use = 0
+    total_volumes_error = 0
+    data = json.dumps(data)
+    data = json.loads(data)
+    data = json.loads(data)
+    print(data['volumes'])
+    total_volumes = str(len(data['volumes']))
+    for volume in data['volumes']:
+        if volume['status'] == 'available':
+            total_volumes_available += 1
+        elif volume['status'] == 'in-use':
+            total_volumes_in_use += 1
+        elif volume['status'] == 'error':
+            total_volumes_error += 1
+        else:
+            total_volumes_other += 1
+    re = {"total_volumes_available" : total_volumes_available, "total_volumes_other": total_volumes_other, "total_volumes_in_use": total_volumes_in_use, "total_volumes_error": total_volumes_error}
+    if data['volumes_links'][0]['rel'] == 'next'
+        re['next'] = data['volumes_links'][0]['href']
+    return re
+
 async def collect_item_volumes(
         data,
         config_dict,
@@ -48,11 +95,11 @@ async def collect_item_volumes(
     total_volumes_other = 0
     total_volumes_in_use = 0
     total_volumes_error = 0
-    total_volumes = str(len(data['volumes']))
     data = json.dumps(data)
     data = json.loads(data)
     data = json.loads(data)
     print(data['volumes'])
+    total_volumes = str(len(data['volumes']))
     for volume in data['volumes']:
         if volume['status'] == 'available':
             total_volumes_available += 1
@@ -62,6 +109,7 @@ async def collect_item_volumes(
             total_volumes_error += 1
         else:
             total_volumes_other += 1
+    
     packet_volumes = [ZabbixMetric(hostId,
                                    key_volumes_total,
                                    total_volumes),
@@ -232,9 +280,9 @@ async def get_volumes(url, id_token, config_dict):
         ) as session:
             async with session.get(url) as r:
                 json_body = await r.text()
-                result = await collect_item_volumes(data=json_body,
+                result = await join_item_volumes(data=json_body,
                                                     config_dict=config_dict)
-                # print(result)
+                print(result)
                 print('collect volumes finish at {}'.format(
                     time.strftime('%d/%m/%Y %H:%M:%S')))
                 await asyncio.sleep(30)
