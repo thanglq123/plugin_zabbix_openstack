@@ -29,6 +29,7 @@ async def collect_item_volumes(
         key_volumes_total=None,
         key_volumes_available=None,
         key_volumes_in_use=None,
+        key_volumes_other=None,
         key_volumes_error=None
 ):
     zserver = zserver or config_dict['zabbix-zserver']
@@ -51,6 +52,7 @@ async def collect_item_volumes(
     data = json.dumps(data)
     data = json.loads(data)
     data = json.loads(data)
+    print(data['volumes'])
     for volume in data['volumes']:
         if volume['status'] == 'available':
             total_volumes_available += 1
